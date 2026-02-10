@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html lang="ru" class="scroll-smooth">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SEA.AI — by Elena Sotnikova</title>
-    <!-- Исправление: Скрипт в head для мгновенного скролла вверх до рендеринга -->
+    <!-- Исправление: Безопасный скролл вверх без ошибок доступа к DOM -->
     <script>
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
         window.scrollTo(0, 0);
+        
+        // Используем только documentElement, так как body может быть еще не готов
+        if (document.documentElement) {
+            document.documentElement.scrollTop = 0;
+        }
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&family=Unbounded:wght@900&display=swap" rel="stylesheet">
@@ -42,7 +47,6 @@
             letter-spacing: -0.05em;
         }
 
-        /* "Резиновый" заголовок с исправленными отступами и десктопным размером */
         .hero-title {
             line-height: 0.95;
             white-space: normal;
@@ -50,16 +54,13 @@
             hyphens: none;
             display: inline-block;
             width: 100%;
-            /* Добавляем внутренние отступы, чтобы текст не касался краев на мобилках */
             padding: 0 20px;
-            /* Минимальный размер 2.2rem, оптимальный 8.8vw, максимальный 8rem (уменьшено для десктопа) */
             font-size: clamp(2.2rem, 8.8vw, 8rem);
             box-sizing: border-box;
         }
 
         @media (min-width: 1024px) {
             .hero-title {
-                /* Уменьшено с 8vw для более аккуратного вида на десктопе */
                 font-size: 6.5vw;
                 padding: 0;
             }
@@ -94,7 +95,6 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* Параллакс элементы */
         .parallax-wrapper {
             position: fixed;
             top: 0;
@@ -130,14 +130,12 @@
 </head>
 <body>
 
-    <!-- Фоновые элементы параллакса -->
     <div class="parallax-wrapper">
         <div class="parallax-blob blob-1" data-speed="0.12"></div>
         <div class="parallax-blob blob-2" data-speed="0.18"></div>
         <div class="parallax-blob blob-3" data-speed="0.08"></div>
     </div>
 
-    <!-- Навигация (Z-index: 999) -->
     <nav class="fixed top-0 left-0 right-0 w-full z-[999] px-4 md:px-8 py-4 flex justify-between items-center bg-[#050505]/90 backdrop-blur-md border-b border-white/5">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg">
@@ -167,7 +165,6 @@
         </div>
     </nav>
 
-    <!-- Мобильное меню -->
     <div id="mobile-menu" class="fixed top-0 left-0 w-full h-fit bg-[#0a0a0a] z-[990] pt-24 pb-10 px-6 border-b border-white/10 lg:hidden shadow-2xl">
         <div class="flex flex-col gap-6 text-center">
             <a href="#features" class="mobile-link text-xl font-black uppercase tracking-tighter font-[Unbounded]">Возможности</a>
@@ -176,7 +173,6 @@
         </div>
     </div>
 
-    <!-- Hero Section -->
     <section class="relative pt-40 md:pt-56 pb-20 md:pb-32 px-0 flex flex-col items-center text-center">
         <div class="animate-fade-up inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 mb-10 md:mb-16 backdrop-blur-sm">
             <span class="brand-subtext text-indigo-300">AI SCHOOL by Elena Sotnikova</span>
@@ -198,7 +194,6 @@
         </a>
     </section>
 
-    <!-- Features -->
     <section id="features" class="max-w-7xl mx-auto px-4 md:px-6 py-24 relative z-10">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="animate-fade-up glass-card sm:col-span-2 lg:row-span-2 p-10 rounded-[40px] flex flex-col justify-between">
@@ -233,7 +228,6 @@
         </div>
     </section>
 
-    <!-- About -->
     <section id="about" class="py-24 px-4 border-y border-white/5 relative z-10">
         <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16">
             <div class="flex-1 text-center lg:text-left">
@@ -249,7 +243,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="py-16 px-6 text-center border-t border-white/5 relative z-10">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
             <div class="flex flex-col items-center md:items-start">
@@ -265,25 +258,22 @@
     </footer>
 
     <script>
-        // Принудительный скролл в начало страницы при полной загрузке (второй уровень защиты)
-        window.addEventListener('load', () => {
-            window.scrollTo(0, 0);
-        });
+        // Немедленный возврат наверх
+        window.scrollTo(0, 0);
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Добавляем scroll-smooth только когда DOM готов
+            document.documentElement.classList.add('scroll-smooth');
+
             const blobs = document.querySelectorAll('.parallax-blob');
             const menuToggle = document.getElementById('menu-toggle');
             const mobileMenu = document.getElementById('mobile-menu');
 
-            // Мобильное меню
             menuToggle.addEventListener('click', () => {
                 mobileMenu.classList.toggle('open');
             });
 
-            // Оптимизированный параллакс эффект
-            let lastScrollY = window.scrollY;
             let ticking = false;
-
             function updateParallax() {
                 const scrollY = window.scrollY;
                 blobs.forEach(blob => {
@@ -295,7 +285,6 @@
             }
 
             window.addEventListener('scroll', () => {
-                lastScrollY = window.scrollY;
                 if (!ticking) {
                     window.requestAnimationFrame(() => {
                         updateParallax();
@@ -304,9 +293,12 @@
                 }
             });
 
-            // Инициализация позиции
             updateParallax();
         });
+
+        window.onload = function() {
+            window.scrollTo(0, 0);
+        };
     </script>
 </body>
 </html>
