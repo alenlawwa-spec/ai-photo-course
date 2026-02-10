@@ -19,6 +19,7 @@
             background-color: #050505;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
@@ -41,6 +42,7 @@
             word-break: normal;
             hyphens: none;
             display: inline-block;
+            max-width: 100%;
         }
 
         @media (min-width: 1024px) {
@@ -51,7 +53,7 @@
 
         @media (max-width: 1023px) {
             .hero-title {
-                font-size: 10.5vw; /* Уменьшено с 12vw, чтобы текст входил в ширину */
+                font-size: 9.5vw; /* Еще более компактный размер для iPhone Pro Max */
             }
         }
 
@@ -99,8 +101,8 @@
         .parallax-blob {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px); /* Уменьшил размытие для четкости */
-            opacity: 0.45; /* Увеличил видимость */
+            filter: blur(80px);
+            opacity: 0.45;
             will-change: transform;
             mix-blend-mode: screen;
         }
@@ -255,6 +257,11 @@
     </footer>
 
     <script>
+        // Скролл в самый верх при загрузке страницы
+        window.addEventListener('load', () => {
+            window.scrollTo(0, 0);
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             const blobs = document.querySelectorAll('.parallax-blob');
             const menuToggle = document.getElementById('menu-toggle');
@@ -273,7 +280,6 @@
                 const scrollY = window.scrollY;
                 blobs.forEach(blob => {
                     const speed = parseFloat(blob.getAttribute('data-speed'));
-                    // Используем translate3d для аппаратного ускорения (GPU)
                     const yPos = -(scrollY * speed);
                     blob.style.transform = `translate3d(0, ${yPos}px, 0)`;
                 });
@@ -290,7 +296,7 @@
                 }
             });
 
-            // Инициализация позиции при загрузке
+            // Инициализация позиции
             updateParallax();
         });
     </script>
