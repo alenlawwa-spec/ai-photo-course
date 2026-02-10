@@ -35,7 +35,7 @@
             letter-spacing: -0.05em;
         }
 
-        /* Золотая середина для H1 */
+        /* "Резиновый" заголовок через clamp */
         .hero-title {
             line-height: 0.95;
             white-space: normal;
@@ -43,17 +43,13 @@
             hyphens: none;
             display: inline-block;
             max-width: 100%;
+            /* Минимальный размер 2.5rem, оптимальный 9.2vw, максимальный 10rem */
+            font-size: clamp(2.5rem, 9.2vw, 10rem);
         }
 
         @media (min-width: 1024px) {
             .hero-title {
                 font-size: 8vw;
-            }
-        }
-
-        @media (max-width: 1023px) {
-            .hero-title {
-                font-size: 9.5vw; /* Еще более компактный размер для iPhone Pro Max */
             }
         }
 
@@ -257,7 +253,7 @@
     </footer>
 
     <script>
-        // Скролл в самый верх при загрузке страницы
+        // Принудительный скролл в начало страницы при полной загрузке
         window.addEventListener('load', () => {
             window.scrollTo(0, 0);
         });
