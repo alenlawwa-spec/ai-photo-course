@@ -84,6 +84,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
+        /* Параллакс элементы */
         .parallax-wrapper {
             position: fixed;
             top: 0;
@@ -92,19 +93,21 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
+            overflow: hidden;
         }
 
         .parallax-blob {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.3;
+            filter: blur(80px); /* Уменьшил размытие для четкости */
+            opacity: 0.45; /* Увеличил видимость */
             will-change: transform;
             mix-blend-mode: screen;
         }
 
-        .blob-1 { width: 40vw; height: 40vw; background: radial-gradient(circle, #4f46e5 0%, transparent 70%); top: 5%; left: -10%; }
-        .blob-2 { width: 50vw; height: 50vw; background: radial-gradient(circle, #7c3aed 0%, transparent 70%); top: 40%; right: -15%; }
+        .blob-1 { width: 55vw; height: 55vw; background: radial-gradient(circle, #4f46e5 0%, transparent 75%); top: -15%; left: -10%; }
+        .blob-2 { width: 65vw; height: 65vw; background: radial-gradient(circle, #7c3aed 0%, transparent 75%); top: 20%; right: -20%; }
+        .blob-3 { width: 45vw; height: 45vw; background: radial-gradient(circle, #6366f1 0%, transparent 75%); bottom: -5%; left: 15%; }
         
         #mobile-menu {
             transform: translateY(-100%);
@@ -117,9 +120,11 @@
 </head>
 <body>
 
+    <!-- Фоновые элементы параллакса -->
     <div class="parallax-wrapper">
-        <div class="parallax-blob blob-1" data-speed="0.04"></div>
-        <div class="parallax-blob blob-2" data-speed="0.08"></div>
+        <div class="parallax-blob blob-1" data-speed="0.12"></div>
+        <div class="parallax-blob blob-2" data-speed="0.18"></div>
+        <div class="parallax-blob blob-3" data-speed="0.08"></div>
     </div>
 
     <!-- Навигация (Z-index: 999) -->
@@ -255,22 +260,38 @@
             const menuToggle = document.getElementById('menu-toggle');
             const mobileMenu = document.getElementById('mobile-menu');
 
+            // Мобильное меню
             menuToggle.addEventListener('click', () => {
                 mobileMenu.classList.toggle('open');
             });
 
-            if (window.innerWidth > 768) {
-                function updateParallax() {
-                    const scrollY = window.scrollY;
-                    blobs.forEach(blob => {
-                        const speed = parseFloat(blob.getAttribute('data-speed'));
-                        const yPos = -(scrollY * speed * 2);
-                        blob.style.transform = `translate3d(0, ${yPos}px, 0)`;
-                    });
-                    requestAnimationFrame(updateParallax);
-                }
-                requestAnimationFrame(updateParallax);
+            // Оптимизированный параллакс эффект
+            let lastScrollY = window.scrollY;
+            let ticking = false;
+
+            function updateParallax() {
+                const scrollY = window.scrollY;
+                blobs.forEach(blob => {
+                    const speed = parseFloat(blob.getAttribute('data-speed'));
+                    // Используем translate3d для аппаратного ускорения (GPU)
+                    const yPos = -(scrollY * speed);
+                    blob.style.transform = `translate3d(0, ${yPos}px, 0)`;
+                });
+                ticking = false;
             }
+
+            window.addEventListener('scroll', () => {
+                lastScrollY = window.scrollY;
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        updateParallax();
+                    });
+                    ticking = true;
+                }
+            });
+
+            // Инициализация позиции при загрузке
+            updateParallax();
         });
     </script>
 </body>
