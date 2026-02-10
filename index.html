@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SEA.AI — by Elena Sotnikova</title>
+    <!-- Исправление: Скрипт в head для мгновенного скролла вверх до рендеринга -->
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&family=Unbounded:wght@900&display=swap" rel="stylesheet">
     <style>
@@ -258,7 +265,7 @@
     </footer>
 
     <script>
-        // Принудительный скролл в начало страницы при полной загрузке
+        // Принудительный скролл в начало страницы при полной загрузке (второй уровень защиты)
         window.addEventListener('load', () => {
             window.scrollTo(0, 0);
         });
